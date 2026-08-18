@@ -1,0 +1,54 @@
+# === Claude Code ===
+.claude/settings.local.json
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated/
+.springBeans
+.sts4-cache
+
+# === Env / secrets ===
+.env
+.env.*
+!.env.example
+*.local
+
+# === Backend (Gradle / Spring Boot) ===
+backend/.gradle/
+backend/build/
+!backend/gradle/wrapper/gradle-wrapper.jar
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+backend/bin/
+!backend/**/src/main/**/bin/
+!backend/**/src/test/**/bin/
+backend/out/
+backend/HELP.md
+
+# === Frontend (Node / Vite) ===
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/coverage/
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Docker ===
+docker/volumes/
