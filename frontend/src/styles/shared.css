@@ -90,6 +90,30 @@
   font-size: 13px;
 }
 
+.status-badge {
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge--ongoing {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent-dark);
+}
+
+.status-badge--upcoming {
+  background: color-mix(in srgb, #2563eb 15%, transparent);
+  color: #2563eb;
+}
+
+.status-badge--ended {
+  background: var(--color-divider);
+  color: var(--color-text-muted);
+}
+
 .page-loading,
 .page-empty {
   padding: 64px 0;

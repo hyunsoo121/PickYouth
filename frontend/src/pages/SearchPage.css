@@ -26,6 +26,39 @@
   min-width: 160px;
 }
 
+.search-form .field--wide {
+  flex-basis: 100%;
+  min-width: 0;
+}
+
+.region-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.region-chip {
+  padding: 7px 14px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.region-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.region-chip--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
 .search-form-actions {
   display: flex;
   gap: 8px;
@@ -54,6 +87,13 @@
 
 .result-card:hover {
   border-color: var(--color-accent);
+}
+
+.result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .result-category {

@@ -1,5 +1,13 @@
 import { apiRequest } from './client';
 
+export type SubsidyStatus = 'UPCOMING' | 'ONGOING' | 'ENDED';
+
+export const SUBSIDY_STATUS_LABEL: Record<SubsidyStatus, string> = {
+  UPCOMING: '시행예정',
+  ONGOING: '시행중',
+  ENDED: '종료',
+};
+
 export interface SubsidySummary {
   id: number;
   plcyNo: string;
@@ -9,6 +17,7 @@ export interface SubsidySummary {
   categoryMid: string;
   applyStart: string | null;
   applyEnd: string | null;
+  status: SubsidyStatus;
 }
 
 export interface SubsidyDetail extends SubsidySummary {
@@ -42,6 +51,8 @@ export interface SearchCondition {
   age?: number;
   income?: number;
   schoolCd?: string;
+  zipCd?: string;
+  status?: SubsidyStatus;
 }
 
 export function searchSubsidies(condition: SearchCondition, page = 0, size = 12) {

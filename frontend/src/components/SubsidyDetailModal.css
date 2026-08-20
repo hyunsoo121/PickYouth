@@ -32,12 +32,19 @@
   color: var(--color-text);
 }
 
+.modal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-right: 24px;
+}
+
 .modal-category {
-  display: inline-block;
   font-size: 12px;
   font-weight: 700;
   color: var(--color-accent-dark);
-  margin-bottom: 8px;
 }
 
 .modal-body h2 {

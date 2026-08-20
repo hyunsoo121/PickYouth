@@ -1,6 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { ApiError } from '../api/client';
-import { searchSubsidies, type SearchCondition, type SubsidyPage } from '../api/subsidies';
+import {
+  searchSubsidies,
+  SUBSIDY_STATUS_LABEL,
+  type SearchCondition,
+  type SubsidyPage,
+  type SubsidyStatus,
+} from '../api/subsidies';
 import NavBar from '../components/NavBar';
 import SubsidyDetailModal from '../components/SubsidyDetailModal';
 import './SearchPage.css';
@@ -18,21 +24,48 @@ const SCHOOL_OPTIONS = [
   { code: '49009', label: '기타' },
 ];
 
+// zipCd 앞 2자리(시도 코드). 실제 DB의 지역 특화 정책(제목/기관명에 지역명이 들어간 건)으로 직접
+// 대조해서 확인한 값 — 강원(51)/전북(52) 특별자치도 개편, 전남·광주(12) 통합 등 최신 행정구역을 반영한다.
+const SIDO_OPTIONS = [
+  { code: '11', label: '서울' },
+  { code: '12', label: '전남·광주' },
+  { code: '26', label: '부산' },
+  { code: '27', label: '대구' },
+  { code: '28', label: '인천' },
+  { code: '30', label: '대전' },
+  { code: '31', label: '울산' },
+  { code: '36', label: '세종' },
+  { code: '41', label: '경기' },
+  { code: '43', label: '충북' },
+  { code: '44', label: '충남' },
+  { code: '47', label: '경북' },
+  { code: '48', label: '경남' },
+  { code: '50', label: '제주' },
+  { code: '51', label: '강원' },
+  { code: '52', label: '전북' },
+];
+
+const STATUS_OPTIONS: SubsidyStatus[] = ['ONGOING', 'UPCOMING', 'ENDED'];
+
 const PAGE_SIZE = 12;
 
 interface FormState {
   age: string;
   income: string;
   schoolCd: string;
+  zipCd: string;
+  status: SubsidyStatus | '';
 }
 
-const EMPTY_FORM: FormState = { age: '', income: '', schoolCd: '' };
+const EMPTY_FORM: FormState = { age: '', income: '', schoolCd: '', zipCd: '', status: '' };
 
 function toCondition(form: FormState): SearchCondition {
   const condition: SearchCondition = {};
   if (form.age.trim()) condition.age = Number(form.age);
   if (form.income.trim()) condition.income = Number(form.income);
   if (form.schoolCd) condition.schoolCd = form.schoolCd;
+  if (form.zipCd) condition.zipCd = form.zipCd;
+  if (form.status) condition.status = form.status;
   return condition;
 }
 
@@ -122,6 +155,52 @@ export default function SearchPage() {
               ))}
             </select>
           </div>
+          <div className="field field--wide">
+            <label>시행 상태</label>
+            <div className="region-chips">
+              <button
+                type="button"
+                className={`region-chip${form.status === '' ? ' region-chip--active' : ''}`}
+                onClick={() => setForm((f) => ({ ...f, status: '' }))}
+              >
+                전체
+              </button>
+              {STATUS_OPTIONS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={`region-chip${form.status === s ? ' region-chip--active' : ''}`}
+                  onClick={() => setForm((f) => ({ ...f, status: s }))}
+                >
+                  {SUBSIDY_STATUS_LABEL[s]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="field field--wide">
+            <label>지역</label>
+            <div className="region-chips">
+              <button
+                type="button"
+                className={`region-chip${form.zipCd === '' ? ' region-chip--active' : ''}`}
+                onClick={() => setForm((f) => ({ ...f, zipCd: '' }))}
+              >
+                전체
+              </button>
+              {SIDO_OPTIONS.map((opt) => (
+                <button
+                  key={opt.code}
+                  type="button"
+                  className={`region-chip${form.zipCd === opt.code ? ' region-chip--active' : ''}`}
+                  onClick={() => setForm((f) => ({ ...f, zipCd: opt.code }))}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="search-form-actions">
             <button className="btn btn--primary btn--md" type="submit">
               검색
@@ -151,10 +230,15 @@ export default function SearchPage() {
                     className="card result-card"
                     onClick={() => setSelectedId(item.id)}
                   >
-                    <span className="result-category">
-                      {item.categoryLarge}
-                      {item.categoryMid ? ` · ${item.categoryMid}` : ''}
-                    </span>
+                    <div className="result-top">
+                      <span className="result-category">
+                        {item.categoryLarge}
+                        {item.categoryMid ? ` · ${item.categoryMid}` : ''}
+                      </span>
+                      <span className={`status-badge status-badge--${item.status.toLowerCase()}`}>
+                        {SUBSIDY_STATUS_LABEL[item.status]}
+                      </span>
+                    </div>
                     <h3 className="result-title">{item.title}</h3>
                     <p className="result-org">{item.org}</p>
                     <p className="result-period">

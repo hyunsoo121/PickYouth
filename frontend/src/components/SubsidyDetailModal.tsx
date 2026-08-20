@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ApiError } from '../api/client';
-import { fetchSubsidyDetail, type SubsidyDetail } from '../api/subsidies';
+import {
+  fetchSubsidyDetail,
+  SUBSIDY_STATUS_LABEL,
+  type SubsidyDetail,
+} from '../api/subsidies';
 import './SubsidyDetailModal.css';
 
 export default function SubsidyDetailModal({
@@ -41,10 +45,15 @@ export default function SubsidyDetailModal({
         {!detail && !error && <div className="page-loading">불러오는 중...</div>}
         {detail && (
           <div className="modal-body">
-            <span className="modal-category">
-              {detail.categoryLarge}
-              {detail.categoryMid ? ` · ${detail.categoryMid}` : ''}
-            </span>
+            <div className="modal-top">
+              <span className="modal-category">
+                {detail.categoryLarge}
+                {detail.categoryMid ? ` · ${detail.categoryMid}` : ''}
+              </span>
+              <span className={`status-badge status-badge--${detail.status.toLowerCase()}`}>
+                {SUBSIDY_STATUS_LABEL[detail.status]}
+              </span>
+            </div>
             <h2>{detail.title}</h2>
             <p className="modal-org">{detail.org}</p>
 

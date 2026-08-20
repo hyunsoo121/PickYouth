@@ -29,4 +29,5 @@ public record SubsidySearchCondition(
     @PositiveOrZero(message = "income은 0 이상이어야 합니다.") Long income,
     String categoryLarge,
     String categoryMid,
-    @ValidCode(value = SbizCd.class, message = "유효하지 않은 specialCd입니다.") String specialCd) {}
+    @ValidCode(value = SbizCd.class, message = "유효하지 않은 specialCd입니다.") String specialCd,
+    SubsidyStatus status) {}

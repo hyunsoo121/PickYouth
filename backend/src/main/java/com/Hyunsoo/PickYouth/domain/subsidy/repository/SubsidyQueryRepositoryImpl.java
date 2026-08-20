@@ -6,6 +6,7 @@ import com.Hyunsoo.PickYouth.domain.subsidy.code.MrgSttsCd;
 import com.Hyunsoo.PickYouth.domain.subsidy.code.SbizCd;
 import com.Hyunsoo.PickYouth.domain.subsidy.code.SchoolCd;
 import com.Hyunsoo.PickYouth.domain.subsidy.dto.SubsidySearchCondition;
+import com.Hyunsoo.PickYouth.domain.subsidy.dto.SubsidyStatus;
 import com.Hyunsoo.PickYouth.domain.subsidy.entity.QSubsidy;
 import com.Hyunsoo.PickYouth.domain.subsidy.entity.QSubsidyRegion;
 import com.Hyunsoo.PickYouth.domain.subsidy.entity.Subsidy;
@@ -14,6 +15,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -54,13 +56,14 @@ public class SubsidyQueryRepositoryImpl implements SubsidyQueryRepository {
             .and(equalsIfPresent(subsidy.majorCd, condition.majorCd()))
             .and(equalsIfPresent(subsidy.categoryLarge, condition.categoryLarge()))
             .and(equalsIfPresent(subsidy.categoryMid, condition.categoryMid()))
-            .and(zipCondition(subsidy, condition.zipCd()));
+            .and(zipCondition(subsidy, condition.zipCd()))
+            .and(statusCondition(subsidy, condition.status()));
 
     List<Subsidy> content =
         queryFactory
             .selectFrom(subsidy)
             .where(where)
-            .orderBy(subsidy.applyEnd.asc().nullsLast(), subsidy.id.desc())
+            .orderBy(subsidy.applyStart.desc().nullsLast(), subsidy.id.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -101,6 +104,24 @@ public class SubsidyQueryRepositoryImpl implements SubsidyQueryRepository {
     return path.eq(value);
   }
 
+  // SubsidyStatus.of()와 동일한 기준(오늘 날짜 vs applyStart/applyEnd)으로 판별한다.
+  private BooleanExpression statusCondition(QSubsidy subsidy, SubsidyStatus status) {
+    if (status == null) {
+      return null;
+    }
+    LocalDate today = LocalDate.now();
+    return switch (status) {
+      case UPCOMING -> subsidy.applyStart.isNotNull().and(subsidy.applyStart.gt(today));
+      case ENDED -> subsidy.applyEnd.isNotNull().and(subsidy.applyEnd.lt(today));
+      case ONGOING -> {
+        BooleanExpression startOk = subsidy.applyStart.isNull().or(subsidy.applyStart.loe(today));
+        BooleanExpression endOk = subsidy.applyEnd.isNull().or(subsidy.applyEnd.goe(today));
+        yield startOk.and(endOk);
+      }
+    };
+  }
+
+  // startsWith로 매칭해 시도 단위(2자리) 프리픽스든 정확한 5자리 zipCd든 둘 다 그대로 지원한다.
   private BooleanExpression zipCondition(QSubsidy subsidy, String zipCd) {
     if (zipCd == null || zipCd.isBlank()) {
       return null;
@@ -108,7 +129,7 @@ public class SubsidyQueryRepositoryImpl implements SubsidyQueryRepository {
     QSubsidyRegion region = QSubsidyRegion.subsidyRegion;
     return JPAExpressions.selectOne()
         .from(region)
-        .where(region.subsidy.eq(subsidy), region.zipCd.eq(zipCd))
+        .where(region.subsidy.eq(subsidy), region.zipCd.startsWith(zipCd))
         .exists();
   }
 }

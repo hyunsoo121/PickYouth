@@ -27,6 +27,7 @@ public record SubsidyDetailResponse(
     String specialCd,
     LocalDate applyStart,
     LocalDate applyEnd,
+    SubsidyStatus status,
     String applyUrl,
     List<String> zipCodes) {
 
@@ -53,6 +54,7 @@ public record SubsidyDetailResponse(
         subsidy.getSpecialCd(),
         subsidy.getApplyStart(),
         subsidy.getApplyEnd(),
+        SubsidyStatus.of(subsidy.getApplyStart(), subsidy.getApplyEnd(), LocalDate.now()),
         subsidy.resolveApplyUrl(),
         subsidy.getRegions().stream().map(r -> r.getZipCd()).toList());
   }
