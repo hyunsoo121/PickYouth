@@ -40,9 +40,9 @@ public class JwtTokenProvider {
   }
 
   /**
-   * {@code jti}에 랜덤 UUID를 넣어 매 호출마다 토큰이 달라지게 한다 — {@code sub}/{@code iat}/{@code exp}만으로 서명하면
-   * 같은 초(second) 안에 발급된 토큰이 바이트 단위로 동일해져(JWT 자체엔 난수 요소가 없음), refresh 회전 시 "새로 발급된 토큰이 곧 이전
-   * 토큰과 같아져 버려 무효화가 안 되는" 문제가 실측으로 발견됨.
+   * {@code jti}에 랜덤 UUID를 넣어 매 호출마다 토큰이 달라지게 한다 — {@code sub}/{@code iat}/{@code exp}만으로 서명하면 같은
+   * 초(second) 안에 발급된 토큰이 바이트 단위로 동일해져(JWT 자체엔 난수 요소가 없음), refresh 회전 시 "새로 발급된 토큰이 곧 이전 토큰과 같아져 버려
+   * 무효화가 안 되는" 문제가 실측으로 발견됨.
    */
   private String generateToken(String email, long expirationMs) {
     Date now = new Date();

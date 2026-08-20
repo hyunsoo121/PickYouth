@@ -79,6 +79,11 @@ public class AuthService {
     return issueTokens(email);
   }
 
+  @Transactional
+  public void logout(String email) {
+    refreshTokenStore.delete(email);
+  }
+
   public UserResponse me(String email) {
     User user =
         userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));

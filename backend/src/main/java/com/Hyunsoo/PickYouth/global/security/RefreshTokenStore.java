@@ -32,6 +32,10 @@ public class RefreshTokenStore {
     return stored != null && stored.equals(refreshToken);
   }
 
+  public void delete(String email) {
+    redisTemplate.delete(key(email));
+  }
+
   private String key(String email) {
     return KEY_PREFIX + email;
   }

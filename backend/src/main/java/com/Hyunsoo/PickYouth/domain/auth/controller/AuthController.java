@@ -56,4 +56,13 @@ public class AuthController {
   public UserResponse me(@AuthenticationPrincipal UserDetails userDetails) {
     return authService.me(userDetails.getUsername());
   }
+
+  @Operation(
+      summary = "로그아웃",
+      description = "저장된 refresh token을 무효화한다. access token은 만료 전까지는 계속 유효하다.")
+  @PostMapping("/logout")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void logout(@AuthenticationPrincipal UserDetails userDetails) {
+    authService.logout(userDetails.getUsername());
+  }
 }
