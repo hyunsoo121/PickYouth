@@ -8,6 +8,7 @@ import com.Hyunsoo.PickYouth.domain.auth.dto.UserResponse;
 import com.Hyunsoo.PickYouth.domain.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,14 +34,14 @@ public class AuthController {
   @Operation(summary = "회원가입")
   @PostMapping("/signup")
   @ResponseStatus(HttpStatus.CREATED)
-  public UserResponse signup(@Valid @RequestBody SignupRequest request) {
-    return authService.signup(request);
+  public UserResponse signup(@Valid @RequestBody SignupRequest request, HttpServletRequest httpRequest) {
+    return authService.signup(request, httpRequest.getRemoteAddr());
   }
 
   @Operation(summary = "로그인", description = "성공 시 access/refresh token을 함께 발급한다.")
   @PostMapping("/login")
-  public TokenResponse login(@Valid @RequestBody LoginRequest request) {
-    return authService.login(request);
+  public TokenResponse login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+    return authService.login(request, httpRequest.getRemoteAddr());
   }
 
   @Operation(

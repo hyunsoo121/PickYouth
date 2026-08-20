@@ -28,14 +28,17 @@ public class CollectPolicyJobConfig {
   private final YouthCenterApiClient apiClient;
   private final PolicyDtoToEntityProcessor processor;
   private final SubsidyUpsertWriter writer;
+  private final ExpiredPolicyCleanupTasklet expiredPolicyCleanupTasklet;
 
   public CollectPolicyJobConfig(
       YouthCenterApiClient apiClient,
       PolicyDtoToEntityProcessor processor,
-      SubsidyUpsertWriter writer) {
+      SubsidyUpsertWriter writer,
+      ExpiredPolicyCleanupTasklet expiredPolicyCleanupTasklet) {
     this.apiClient = apiClient;
     this.processor = processor;
     this.writer = writer;
+    this.expiredPolicyCleanupTasklet = expiredPolicyCleanupTasklet;
   }
 
   @Bean
@@ -59,10 +62,20 @@ public class CollectPolicyJobConfig {
   }
 
   @Bean
-  public Job collectPolicyJob(JobRepository jobRepository, Step collectPolicyStep) {
+  public Step cleanupExpiredPoliciesStep(
+      JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+    return new StepBuilder("cleanupExpiredPoliciesStep", jobRepository)
+        .tasklet(expiredPolicyCleanupTasklet, transactionManager)
+        .build();
+  }
+
+  @Bean
+  public Job collectPolicyJob(
+      JobRepository jobRepository, Step collectPolicyStep, Step cleanupExpiredPoliciesStep) {
     return new JobBuilder("collectPolicyJob", jobRepository)
         .incrementer(new RunIdIncrementer())
         .start(collectPolicyStep)
+        .next(cleanupExpiredPoliciesStep)
         .build();
   }
 }

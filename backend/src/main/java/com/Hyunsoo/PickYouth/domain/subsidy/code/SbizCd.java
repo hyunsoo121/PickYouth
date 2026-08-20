@@ -6,7 +6,7 @@ import java.util.Arrays;
  * 온통청년 API의 sbizCd(특화요건) 공통코드. 코드정의서(엑셀)엔 {@code sBizCd}로 표기되어 있으나 실제 API 응답 필드명은 소문자 {@code
  * sbizCd}다.
  */
-public enum SbizCd {
+public enum SbizCd implements CodeEnum {
   SMALL_BUSINESS("14001", "중소기업"),
   WOMEN("14002", "여성"),
   BASIC_LIVELIHOOD("14003", "기초생활수급자"),

@@ -1,0 +1,133 @@
+.search-page {
+  padding: 48px 0 96px;
+}
+
+.search-page h1 {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.search-sub {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+
+.search-form .field {
+  min-width: 160px;
+}
+
+.search-form .field--wide {
+  flex-basis: 100%;
+  min-width: 0;
+}
+
+.region-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.region-chip {
+  padding: 7px 14px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.region-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.region-chip--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.search-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.search-count {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.result-card {
+  padding: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.result-card:hover {
+  border-color: var(--color-accent);
+}
+
+.result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.result-category {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent-dark);
+}
+
+.result-title {
+  font-size: 15px;
+  line-height: 1.4;
+  min-height: 2.8em;
+}
+
+.result-org {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.result-period {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: auto;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.pagination-status {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}

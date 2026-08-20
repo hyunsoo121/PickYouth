@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * 온통청년 API의 schoolCd(학력요건) 공통코드. API 응답값은 5자리 코드 앞에 "00"이 붙은 7자리로 내려오므로 normalize()로 정규화 후 매칭한다.
  */
-public enum SchoolCd {
+public enum SchoolCd implements CodeEnum {
   UNDER_HIGH_SCHOOL("49001", "고졸미만"),
   HIGH_SCHOOL_ENROLLED("49002", "고교재학"),
   HIGH_SCHOOL_EXPECTED_GRAD("49003", "고졸예정"),

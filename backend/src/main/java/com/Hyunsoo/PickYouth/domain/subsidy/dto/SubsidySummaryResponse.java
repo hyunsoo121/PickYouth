@@ -12,7 +12,8 @@ public record SubsidySummaryResponse(
     String categoryLarge,
     String categoryMid,
     LocalDate applyStart,
-    LocalDate applyEnd) {
+    LocalDate applyEnd,
+    SubsidyStatus status) {
 
   public static SubsidySummaryResponse from(Subsidy subsidy) {
     return new SubsidySummaryResponse(
@@ -23,6 +24,7 @@ public record SubsidySummaryResponse(
         subsidy.getCategoryLarge(),
         subsidy.getCategoryMid(),
         subsidy.getApplyStart(),
-        subsidy.getApplyEnd());
+        subsidy.getApplyEnd(),
+        SubsidyStatus.of(subsidy.getApplyStart(), subsidy.getApplyEnd(), LocalDate.now()));
   }
 }
