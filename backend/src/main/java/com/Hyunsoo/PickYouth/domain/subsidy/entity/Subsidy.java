@@ -57,6 +57,10 @@ public class Subsidy {
 
   private String schoolCd;
 
+  private String jobCd;
+
+  private String majorCd;
+
   private String marriageCd;
 
   private String incomeCondCd;
@@ -65,16 +69,22 @@ public class Subsidy {
 
   private Long incomeMax;
 
+  private String specialCd;
+
   private String applyPeriodRaw;
 
   private LocalDate applyStart;
 
   private LocalDate applyEnd;
 
+  /** 실측 결과 varchar(255)를 넘는 URL이 존재해(쿼리스트링 포함) TEXT로 둔다. */
+  @Column(columnDefinition = "text")
   private String applyUrl;
 
+  @Column(columnDefinition = "text")
   private String refUrl1;
 
+  @Column(columnDefinition = "text")
   private String refUrl2;
 
   private LocalDateTime firstRegDt;
@@ -97,10 +107,13 @@ public class Subsidy {
       Integer ageMax,
       String ageLimitYn,
       String schoolCd,
+      String jobCd,
+      String majorCd,
       String marriageCd,
       String incomeCondCd,
       Long incomeMin,
       Long incomeMax,
+      String specialCd,
       String applyPeriodRaw,
       LocalDate applyStart,
       LocalDate applyEnd,
@@ -120,10 +133,13 @@ public class Subsidy {
     this.ageMax = ageMax;
     this.ageLimitYn = ageLimitYn;
     this.schoolCd = schoolCd;
+    this.jobCd = jobCd;
+    this.majorCd = majorCd;
     this.marriageCd = marriageCd;
     this.incomeCondCd = incomeCondCd;
     this.incomeMin = incomeMin;
     this.incomeMax = incomeMax;
+    this.specialCd = specialCd;
     this.applyPeriodRaw = applyPeriodRaw;
     this.applyStart = applyStart;
     this.applyEnd = applyEnd;
@@ -137,6 +153,64 @@ public class Subsidy {
   public void addRegion(SubsidyRegion region) {
     regions.add(region);
     region.assignSubsidy(this);
+  }
+
+  /** 배치 재수집 시 기존 row를 최신 값으로 갱신한다. firstRegDt는 최초 등록 시점 그대로 유지한다. */
+  public void update(
+      String title,
+      String description,
+      String supportContent,
+      String org,
+      String categoryLarge,
+      String categoryMid,
+      Integer ageMin,
+      Integer ageMax,
+      String ageLimitYn,
+      String schoolCd,
+      String jobCd,
+      String majorCd,
+      String marriageCd,
+      String incomeCondCd,
+      Long incomeMin,
+      Long incomeMax,
+      String specialCd,
+      String applyPeriodRaw,
+      LocalDate applyStart,
+      LocalDate applyEnd,
+      String applyUrl,
+      String refUrl1,
+      String refUrl2,
+      LocalDateTime lastMdfcnDt) {
+    this.title = title;
+    this.description = description;
+    this.supportContent = supportContent;
+    this.org = org;
+    this.categoryLarge = categoryLarge;
+    this.categoryMid = categoryMid;
+    this.ageMin = ageMin;
+    this.ageMax = ageMax;
+    this.ageLimitYn = ageLimitYn;
+    this.schoolCd = schoolCd;
+    this.jobCd = jobCd;
+    this.majorCd = majorCd;
+    this.marriageCd = marriageCd;
+    this.incomeCondCd = incomeCondCd;
+    this.incomeMin = incomeMin;
+    this.incomeMax = incomeMax;
+    this.specialCd = specialCd;
+    this.applyPeriodRaw = applyPeriodRaw;
+    this.applyStart = applyStart;
+    this.applyEnd = applyEnd;
+    this.applyUrl = applyUrl;
+    this.refUrl1 = refUrl1;
+    this.refUrl2 = refUrl2;
+    this.lastMdfcnDt = lastMdfcnDt;
+  }
+
+  /** zipCd 목록을 최신 상태로 통째로 교체한다 (orphanRemoval로 기존 region row는 자동 삭제). */
+  public void replaceRegions(List<String> zipCodes) {
+    regions.clear();
+    zipCodes.forEach(zipCd -> addRegion(new SubsidyRegion(zipCd)));
   }
 
   /** aplyUrlAddr가 빈 문자열일 때 refUrlAddr1 → refUrlAddr2 순으로 폴백해 신청 링크를 반환한다. */
