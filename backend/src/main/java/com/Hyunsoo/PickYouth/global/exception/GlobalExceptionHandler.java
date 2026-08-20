@@ -3,6 +3,7 @@ package com.Hyunsoo.PickYouth.global.exception;
 import com.Hyunsoo.PickYouth.domain.auth.exception.DuplicateEmailException;
 import com.Hyunsoo.PickYouth.domain.auth.exception.InvalidCredentialsException;
 import com.Hyunsoo.PickYouth.domain.auth.exception.InvalidRefreshTokenException;
+import com.Hyunsoo.PickYouth.domain.auth.exception.TooManyAttemptsException;
 import com.Hyunsoo.PickYouth.domain.subsidy.exception.InvalidPageSizeException;
 import com.Hyunsoo.PickYouth.domain.subsidy.exception.SubsidyNotFoundException;
 import com.Hyunsoo.PickYouth.domain.user.exception.UserNotFoundException;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({InvalidCredentialsException.class, InvalidRefreshTokenException.class})
   public ResponseEntity<ErrorResponse> handleUnauthorized(RuntimeException e) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
+  }
+
+  @ExceptionHandler(TooManyAttemptsException.class)
+  public ResponseEntity<ErrorResponse> handleTooManyAttempts(TooManyAttemptsException e) {
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(new ErrorResponse(e.getMessage()));
   }
 
   @ExceptionHandler(BindException.class)
