@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import './LandingPage.css';
 
 const STATS = [
@@ -119,13 +120,14 @@ function Header() {
           청년픽
         </a>
         <nav className="site-nav">
+          <Link to="/search">지원금 찾기</Link>
           <a href="#how-it-works">이용 방법</a>
           <a href="#comparison">기능 비교</a>
           <a href="#faq">FAQ</a>
         </nav>
-        <a className="btn btn--primary btn--sm" href="#signup-hero">
-          알림 신청하기
-        </a>
+        <Link className="btn btn--primary btn--sm" to="/search">
+          지원금 찾기
+        </Link>
       </div>
     </header>
   );
@@ -146,7 +148,13 @@ function Hero() {
         알림도 받아보세요.
       </p>
       <EmailSignupForm id="signup-hero" variant="light" buttonLabel="내 지원금 확인하고 알림받기" />
-      <p className="hero-note">Phase 1은 서울·경기 지역 정책부터 시작합니다.</p>
+      <p className="hero-note">
+        Phase 1은 서울·경기 지역 정책부터 시작합니다. 바로{' '}
+        <Link to="/search" style={{ textDecoration: 'underline' }}>
+          지원금 찾아보기
+        </Link>
+        도 가능합니다.
+      </p>
     </section>
   );
 }
