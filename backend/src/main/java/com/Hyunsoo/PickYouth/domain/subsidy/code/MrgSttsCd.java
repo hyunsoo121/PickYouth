@@ -3,7 +3,7 @@ package com.Hyunsoo.PickYouth.domain.subsidy.code;
 import java.util.Arrays;
 
 /** 온통청년 API의 mrgSttsCd(결혼상태) 공통코드. */
-public enum MrgSttsCd {
+public enum MrgSttsCd implements CodeEnum {
   MARRIED("55001", "기혼"),
   SINGLE("55002", "미혼"),
   NONE("55003", "제한없음");

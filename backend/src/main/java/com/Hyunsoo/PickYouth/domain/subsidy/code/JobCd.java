@@ -3,7 +3,7 @@ package com.Hyunsoo.PickYouth.domain.subsidy.code;
 import java.util.Arrays;
 
 /** 온통청년 API의 jobCd(취업요건) 공통코드. */
-public enum JobCd {
+public enum JobCd implements CodeEnum {
   EMPLOYED("13001", "재직자"),
   SELF_EMPLOYED("13002", "자영업자"),
   UNEMPLOYED("13003", "미취업자"),

@@ -3,6 +3,7 @@ package com.Hyunsoo.PickYouth.domain.subsidy.controller;
 import com.Hyunsoo.PickYouth.domain.subsidy.dto.SubsidyDetailResponse;
 import com.Hyunsoo.PickYouth.domain.subsidy.dto.SubsidyPageResponse;
 import com.Hyunsoo.PickYouth.domain.subsidy.dto.SubsidySearchCondition;
+import com.Hyunsoo.PickYouth.domain.subsidy.exception.InvalidPageSizeException;
 import com.Hyunsoo.PickYouth.domain.subsidy.service.SubsidyQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/subsidies")
 public class SubsidyController {
 
+  private static final int MAX_PAGE_SIZE = 100;
+
   private final SubsidyQueryService subsidyQueryService;
 
   public SubsidyController(SubsidyQueryService subsidyQueryService) {
@@ -30,6 +33,9 @@ public class SubsidyController {
   public SubsidyPageResponse search(
       @Valid @Parameter(description = "검색/매칭 조건") SubsidySearchCondition condition,
       @Parameter(hidden = true) Pageable pageable) {
+    if (pageable.getPageSize() > MAX_PAGE_SIZE) {
+      throw new InvalidPageSizeException(pageable.getPageSize(), MAX_PAGE_SIZE);
+    }
     return subsidyQueryService.search(condition, pageable);
   }
 
