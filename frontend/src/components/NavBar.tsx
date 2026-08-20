@@ -21,6 +21,7 @@ export default function NavBar() {
           <Link to="/search">지원금 찾기</Link>
           {user ? (
             <>
+              <Link to="/bookmarks">관심 정책</Link>
               <Link to="/me">마이페이지</Link>
               <button type="button" className="btn btn--ghost btn--sm" onClick={handleLogout}>
                 로그아웃

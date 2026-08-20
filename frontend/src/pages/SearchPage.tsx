@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { addBookmark, fetchBookmarks, removeBookmark } from '../api/bookmarks';
 import { ApiError } from '../api/client';
 import {
   searchSubsidies,
@@ -7,6 +8,7 @@ import {
   type SubsidyPage,
   type SubsidyStatus,
 } from '../api/subsidies';
+import { useAuth } from '../auth/AuthContext';
 import NavBar from '../components/NavBar';
 import SubsidyDetailModal from '../components/SubsidyDetailModal';
 import './SearchPage.css';
@@ -70,6 +72,7 @@ function toCondition(form: FormState): SearchCondition {
 }
 
 export default function SearchPage() {
+  const { user } = useAuth();
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [condition, setCondition] = useState<SearchCondition>({});
   const [page, setPage] = useState(0);
@@ -77,6 +80,39 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (!user) {
+      setBookmarkedIds(new Set());
+      return;
+    }
+    fetchBookmarks()
+      .then((items) => setBookmarkedIds(new Set(items.map((it) => it.id))))
+      .catch(() => {});
+  }, [user]);
+
+  async function toggleBookmark(subsidyId: number) {
+    const isBookmarked = bookmarkedIds.has(subsidyId);
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (isBookmarked) next.delete(subsidyId);
+      else next.add(subsidyId);
+      return next;
+    });
+    try {
+      if (isBookmarked) await removeBookmark(subsidyId);
+      else await addBookmark(subsidyId);
+    } catch {
+      // 실패하면 낙관적 업데이트를 되돌린다.
+      setBookmarkedIds((prev) => {
+        const next = new Set(prev);
+        if (isBookmarked) next.add(subsidyId);
+        else next.delete(subsidyId);
+        return next;
+      });
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -224,19 +260,38 @@ export default function SearchPage() {
             ) : (
               <div className="result-grid">
                 {result.content.map((item) => (
-                  <button
+                  <div
                     key={item.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     className="card result-card"
                     onClick={() => setSelectedId(item.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') setSelectedId(item.id);
+                    }}
                   >
                     <div className="result-top">
                       <span className="result-category">
                         {item.categoryLarge}
                         {item.categoryMid ? ` · ${item.categoryMid}` : ''}
                       </span>
-                      <span className={`status-badge status-badge--${item.status.toLowerCase()}`}>
-                        {SUBSIDY_STATUS_LABEL[item.status]}
+                      <span className="result-top-right">
+                        <span className={`status-badge status-badge--${item.status.toLowerCase()}`}>
+                          {SUBSIDY_STATUS_LABEL[item.status]}
+                        </span>
+                        {user && (
+                          <button
+                            type="button"
+                            className="bookmark-toggle"
+                            aria-label="관심 등록/해제"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleBookmark(item.id);
+                            }}
+                          >
+                            {bookmarkedIds.has(item.id) ? '♥' : '♡'}
+                          </button>
+                        )}
                       </span>
                     </div>
                     <h3 className="result-title">{item.title}</h3>
@@ -244,7 +299,7 @@ export default function SearchPage() {
                     <p className="result-period">
                       {item.applyStart ?? '상시'} ~ {item.applyEnd ?? '상시'}
                     </p>
-                  </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -277,7 +332,12 @@ export default function SearchPage() {
       </div>
 
       {selectedId !== null && (
-        <SubsidyDetailModal subsidyId={selectedId} onClose={() => setSelectedId(null)} />
+        <SubsidyDetailModal
+          subsidyId={selectedId}
+          onClose={() => setSelectedId(null)}
+          isBookmarked={user ? bookmarkedIds.has(selectedId) : undefined}
+          onToggleBookmark={user ? () => toggleBookmark(selectedId) : undefined}
+        />
       )}
     </div>
   );
