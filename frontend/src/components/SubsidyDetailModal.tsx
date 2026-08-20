@@ -10,9 +10,13 @@ import './SubsidyDetailModal.css';
 export default function SubsidyDetailModal({
   subsidyId,
   onClose,
+  isBookmarked,
+  onToggleBookmark,
 }: {
   subsidyId: number;
   onClose: () => void;
+  isBookmarked?: boolean;
+  onToggleBookmark?: () => void;
 }) {
   const [detail, setDetail] = useState<SubsidyDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -50,8 +54,20 @@ export default function SubsidyDetailModal({
                 {detail.categoryLarge}
                 {detail.categoryMid ? ` · ${detail.categoryMid}` : ''}
               </span>
-              <span className={`status-badge status-badge--${detail.status.toLowerCase()}`}>
-                {SUBSIDY_STATUS_LABEL[detail.status]}
+              <span className="modal-top-right">
+                <span className={`status-badge status-badge--${detail.status.toLowerCase()}`}>
+                  {SUBSIDY_STATUS_LABEL[detail.status]}
+                </span>
+                {onToggleBookmark && (
+                  <button
+                    type="button"
+                    className="bookmark-toggle"
+                    aria-label="관심 등록/해제"
+                    onClick={onToggleBookmark}
+                  >
+                    {isBookmarked ? '♥' : '♡'}
+                  </button>
+                )}
               </span>
             </div>
             <h2>{detail.title}</h2>

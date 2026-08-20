@@ -114,6 +114,16 @@
   color: var(--color-text-muted);
 }
 
+.bookmark-toggle {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-accent);
+  padding: 0;
+}
+
 .page-loading,
 .page-empty {
   padding: 64px 0;
