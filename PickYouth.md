@@ -66,7 +66,7 @@
 | 엔티티 | 주요 필드 | 비고 |
 |---|---|---|
 | `User` | id, email, password(암호화), name, created_at | |
-| `Subsidy` | id, plcyNo, title, org, category_large, category_mid, age_min, age_max, age_limit_yn, school_cd, marriage_cd, income_cond_cd, income_min, income_max, apply_period_raw, apply_start, apply_end, apply_url, ref_url1, ref_url2, first_reg_dt, last_mdfcn_dt | 아래 5절 필드 매핑표 참고 |
+| `Subsidy` | id, plcyNo, title, org, category_large, category_mid, age_min, age_max, age_limit_yn, school_cd, job_cd, major_cd, marriage_cd, income_cond_cd, income_min, income_max, special_cd, apply_period_raw, apply_start, apply_end, apply_url, ref_url1, ref_url2, first_reg_dt, last_mdfcn_dt | job_cd/major_cd/special_cd는 각각 API의 jobCd(취업요건)/plcyMajorCd(전공요건)/sbizCd(특화요건) 매핑. 아래 5절 필드 매핑표 참고 |
 | `SubsidyRegion` | id, subsidy_id(FK), zip_cd | `Subsidy`와 1:N — zipCd가 콤마로 다중값이라 정규화 필요 (아래 6절 참고) |
 | `Bookmark` | id, user_id(FK), subsidy_id(FK), created_at | |
 | `AlertSubscription` | id, user_id(FK), age, region, school_cd, income, channel(EMAIL/KAKAO), active | |
@@ -83,7 +83,7 @@
 - `mclsfNm`(중분류, 17개): 취업/재직자/창업/주택및거주지/기숙사/전월세및주거급여지원/미래역량강화/교육비지원/온라인교육/취약계층및금융지원/건강/예술인지원/문화활동/청년참여/정책인프라구축/청년국제교류/권익보호
 - `plcyKywdNm`(키워드, 17개): 대출/보조금/바우처/금리혜택/교육지원/맞춤형상담서비스/인턴/벤처/중소기업/청년가장/장기미취업청년/공공임대주택/신용회복/육아/출산/해외진출/주거지원
 
-MVP 매칭 필터는 나이 + 지역을 핵심 축으로, 학적상태/소득/대분류를 부가 필터로 설계.
+MVP 매칭 필터는 나이 + 지역을 핵심 축으로, 학적상태/소득/대분류를 부가 필터로 설계. 이후 취업요건(jobCd)/전공요건(plcyMajorCd)/특화요건(sbizCd)을 추가 부가 필터로 확장(2026-08-20).
 
 ---
 
@@ -113,6 +113,7 @@ GET https://www.youthcenter.go.kr/go/ythip/getPlcy
 | `sprtTrgtMinAge` / `sprtTrgtMaxAge` / `sprtTrgtAgeLmtYn` | 나이 매칭 | 정상 동작 확인 |
 | `zipCd` | `SubsidyRegion` | **콤마로 구분된 다중값** (`"12110,12130,..."`) — split 후 1:N 테이블에 삽입 |
 | `schoolCd` / `earnCndSeCd` / `earnMinAmt` / `earnMaxAmt` / `mrgSttsCd` | 학적/소득/결혼 매칭 | 코드값은 아래 "코드값 자릿수 주의" 참고. `earnCndSeCd`가 `43002`(연소득)일 때만 `earnMinAmt`/`Max` 사용, 그 외는 무관 처리 |
+| `jobCd` / `plcyMajorCd` | 취업요건 / 전공요건 매칭 | `jobCd`는 라벨까지 `JobCd` enum으로 검증 완료. `plcyMajorCd`는 코드 범위(11001~11009)만 확인됐고 코드별 정확한 라벨은 미검증 — `PlcyMajorCd`는 normalize만 제공, 라벨 enum 승격 전에 실제 코드정의서/API로 검증 필요 |
 | `aplyUrlAddr` | 신청 아웃링크 | **빈 문자열 케이스 있음** → `refUrlAddr1` → `refUrlAddr2` 순으로 폴백 |
 | `aplyYmd` | 마감 임박 알림 계산 | `"20260807 ~ 20260930"` 형식, `" ~ "` split로 파싱. **빈 문자열(상시모집 등) 케이스 있음 → 알림 대상에서 제외 처리** |
 | `bizPrdBgngYmd` / `bizPrdEndYmd` | (미사용) | **실사용 데이터는 공백 문자열**(`"        "`)로 채워지는 경우가 많아 신뢰 불가 — `aplyYmd`로 대체 |
