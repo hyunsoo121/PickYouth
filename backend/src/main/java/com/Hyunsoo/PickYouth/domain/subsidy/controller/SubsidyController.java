@@ -7,6 +7,7 @@ import com.Hyunsoo.PickYouth.domain.subsidy.service.SubsidyQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ public class SubsidyController {
   @Operation(summary = "조건 매칭 정책 목록 조회", description = "모든 조건은 선택값이며, 비워두면 해당 축으로 필터링하지 않는다.")
   @GetMapping
   public SubsidyPageResponse search(
-      @Parameter(description = "검색/매칭 조건") SubsidySearchCondition condition,
+      @Valid @Parameter(description = "검색/매칭 조건") SubsidySearchCondition condition,
       @Parameter(hidden = true) Pageable pageable) {
     return subsidyQueryService.search(condition, pageable);
   }
